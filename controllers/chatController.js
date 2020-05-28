@@ -144,6 +144,7 @@ export const writeGif = async (req, res) => {
       room: req.params.id,
       name: req.user.name,
       color: req.session.color,
+      email: req.user.email,
       gif: req.file.filename,
     });
     await chat.save();
