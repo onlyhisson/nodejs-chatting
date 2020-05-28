@@ -1,0 +1,26 @@
+<div class="container-fluid">
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="panel panel-filled ">
+                <div class="panel-body">
+                    <div class="btn-group pull-right m-b-md">
+                        <a class="btn btn-default btn-xs" href="<%=routes.users%>/<%=routes.editProfile%>">Edit Profile</a>
+                        <a class="btn btn-default btn-xs" href="<%=routes.users%>/<%=routes.changePassword%>">Change Password</a>
+                    </div>
+                    <%
+                        let userImage = '/images/profile.jpg';
+                        if(user.avatarUrl){userImage = user.avatarUrl;};
+                    %>
+                    <img alt="image" class="rounded image-lg" src="<%=userImage%>">
+                    <h5 class="m-b-none"><a href=""> <%=user.name%> </a></h5>
+
+                    <div class="m-b-xs c-white small"><%=user.email%></div>
+                    <p><%=user.introduce%></p>
+                    <small><i class="fa fa-clock-o"></i> <%=user.createdAt%></small>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,132 @@
+<script src="/public/js/socket.io.js"></script>
+<script>
+    // 다른 스크립트 보다 socket.io 가 우선 실행되어 
+    // 글로벌 변수를 불러오지 못하기 때문에 강제 지연
+    const connectSokcet = () => {
+        setTimeout(function () {    
+            // client socket connection set
+            const socket = io.connect(`${COMMON_VAL.LOC_URL}:${COMMON_VAL.LOC_PORT}/room`, {
+                path: '/socket.io'
+            });
+
+            socket.on('connect', function() {
+                console.log('room socket connected : ', socket.connected);
+            });
+
+            socket.on('newRoom', function (data) {
+                let tr = document.createElement('tr');
+                let td = document.createElement('td');
+                let button = document.createElement('button');
+
+                td.textContent = data.title;
+                tr.appendChild(td);
+
+                td = document.createElement('td');
+                td.textContent = data.password ? '비밀방' : '공개방';
+                tr.appendChild(td);
+
+                td = document.createElement('td');
+                td.textContent = data.max;
+                tr.appendChild(td);
+
+                td = document.createElement('td');
+                td.style.color = data.color;
+                td.textContent = data.name;
+                tr.appendChild(td);
+
+                td = document.createElement('td');
+                td.textContent = moment(data.createdAt).format('YYYY-MM-DD hh:mm:ss');
+                tr.appendChild(td);
+
+                td = document.createElement('td');
+                button.classList.add('btn-info');
+                button.textContent = '입장';
+                button.dataset.password = data.password ? 'true' : 'false';
+                button.dataset.id = data._id;
+                button.addEventListener('click', addBtnEvent);
+                td.appendChild(button);
+                tr.appendChild(td);
+
+                tr.style.textAlign = "center";
+                tr.dataset.id = data._id;
+                
+                document.querySelector('table tbody').appendChild(tr);
+            });
+
+            socket.on('removeRoom', function (data) {
+                document.querySelectorAll('tbody tr').forEach(function (tr) {
+                    if (tr.dataset.id === data) {
+                        tr.parentNode.removeChild(tr);
+                    }
+                });
+            });
+
+            function addBtnEvent(e) {
+                if (e.target.dataset.password === 'true') {
+                    const password = prompt('비밀번호를 입력하세요');
+                    location.href = '/chatting/room/' + e.target.dataset.id + '?password=' + password;
+                } else {
+                    location.href = '/chatting/room/' + e.target.dataset.id;
+                }
+            }
+
+            document.querySelectorAll('.join-btn').forEach(function (btn) {
+                btn.addEventListener('click', addBtnEvent);
+            });
+        }, 500);
+    }
+</script>
+
+<script>
+    const dtOption = {
+        dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>tp",
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+        buttons: [
+            {extend: 'copy', className: 'btn-sm'},
+            {extend: 'csv', title: 'ExampleFile', className: 'btn-sm'},
+            {extend: 'pdf', title: 'ExampleFile', className: 'btn-sm'},
+            {extend: 'print', className: 'btn-sm'}
+        ],
+        "order": [[ 4, "desc" ]] // sorting
+    }
+    $(document).ready(function () { 
+        //$('#roomDataTable1').DataTable(dtOption);
+        getRooms(); // getRooms 를 먼저 해야 soket이 정상 작동한다.
+        connectSokcet();
+    });
+</script>
+
+<script>
+    function getRooms() {
+        let html = '';
+        let pwYn = true;
+        $.ajax({
+            type: "GET",
+            url: "/api/rooms",
+            success: function(data){
+                if(data.status == 'success') {
+                    data.rooms.forEach((el) => { 
+                        pwYn = el.password ? '비밀방' : '공개방';
+                        html += ` <tr class="text-center" data-id=${el._id}> ` ;
+                        html += `     <td>${el.title}</td> ` ;
+                        html += `     <td>${pwYn}</td> ` ;
+                        html += `     <td>${el.max}</td> ` ;
+                        html += `     <td style="color: ${el.color};">${el.name}</td> ` ;
+                        html += `     <td>${moment(el.createdAt).format('YYYY-MM-DD hh:mm:ss') }</td> ` ;
+                        html += `     <td> ` ;
+                        html += `         <button class='btn-info join-btn' data-password="${pwYn}" data-id="${el._id}">입장</button> ` ;
+                        html += `     </td> ` ;
+                        html += ` </tr> ` ;
+                    });
+                    $('#roomDataTable1 tbody').html(html);
+                    
+                } else {
+                    console.log('get rooms failed');
+                }
+            },
+            error: function (e) {
+                console.log(e);
+            }
+        });
+    }
+</script>

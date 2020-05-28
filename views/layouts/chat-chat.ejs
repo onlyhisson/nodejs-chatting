@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include('../partials/head') %>
+</head>
+    <body>
+        <%
+            let flashMsg = {
+                type: '',
+                text: ''
+            };
+            if(messages.error) {
+                flashMsg.type = 'error';
+                flashMsg.text = messages.error;
+            };
+            if(messages.info) {
+                flashMsg.type = 'info';
+                flashMsg.text = messages.info;
+            };
+            if(messages.success) {
+                flashMsg.type = 'success';
+                flashMsg.text = messages.success;
+            };
+        %>
+        <input id="showToastr" type="hidden" onClick='showToastr("<%=flashMsg.type%>", "<%=flashMsg.text%>")'>
+        <div class="wrapper">
+            <%- include('../partials/top') %>
+            <%- include('../partials/left') %>
+            <section class="content">
+                <%- body %>
+            </section>
+        </div>
+        <%- include('../partials/footer') %>
+        <%- include('../partials/scripts-main') %>
+        <%- include('../partials/scripts-chat') %>
+    </body>
+
+</html>

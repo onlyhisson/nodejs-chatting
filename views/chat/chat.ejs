@@ -1,0 +1,73 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="view-header">
+                <div class="pull-right text-right" style="line-height: 14px">
+                    <small><%=pageTitle%><br>General<br> <span class="c-white">Table styles</span></small>
+                </div>
+                <div class="header-icon">
+                    <i class="pe page-header-icon pe-7s-menu"></i>
+                </div>
+                <div class="header-title">
+                    <h3><%=pageTitle%></h3>
+                    <small><%=subTitle%></small>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-filled">
+                <div class="panel-heading" style="display: none;">
+                    <!-- <div class="panel-tools">
+                        <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                        <a class="panel-close"><i class="fa fa-times"></i></a>
+                    </div> -->
+                    <%=subTitle%>
+                </div>
+                <div class="panel-body">
+                    <div class="loader-container" style="height: 120px; padding: 40px 0;">
+                        <div class="loader-dots align-self-auto"></div>
+                    </div>
+                    <div id="chat-list" style="display: none;">
+                    <% 
+                        chats.forEach((el) => { 
+                            if(el.name === name) {
+                    %>
+                        <div class="mine" style="color: <%=el.color%>;">
+                            <div><%=el.name%></div>
+                    <%          if(el.gif) { %>
+                            <img src="/gif/<%=el.gif%>"/>
+                    <%          } else { %>
+                            <div><%=el.chat%></div>
+                    <%          } %>
+                        </div>
+                    <%      } else if(el.name == 'system') { %>
+                        <div class="system">
+                            <div><%=el.chat%></div>
+                        </div>
+                    <%      } else { %>
+                        <div class="other" style="color: <%=el.color%>;">
+                            <div><%=el.name%></div>
+                    <%          if(el.gif) { %>
+                            <img src="/gif/<%=el.gif%>"/>
+                    <%          } else { %>
+                            <div><%=el.chat%></div>
+                    <%          } %>
+                        </div>
+                    <%      } %>
+                    <% }) %> 
+                    </div>
+                    <form id="chat-form" action="/chat" method="post" enctype="multipart/form-data" style="display: none;">
+                        <label for="gif">GIF 올리기</label>
+                        <input id="gif" type="file" name="gif" accept="image/gif">
+                        <input id="chat" name="chat">
+                        <button class="btn btn-default" type="submit">전송</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

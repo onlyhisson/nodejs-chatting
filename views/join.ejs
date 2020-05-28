@@ -1,0 +1,52 @@
+<div class="container-center lg animated slideInDown">
+
+
+    <div class="view-header">
+        <div class="header-icon">
+            <i class="pe page-header-icon pe-7s-add-user"></i>
+        </div>
+        <div class="header-title">
+            <h3>Register</h3>
+            <small>
+                Please enter your data to register.
+            </small>
+        </div>
+    </div>
+
+    <div class="panel panel-filled">
+        <div class="panel-body">
+            <p>
+
+            </p>
+            <form action="<%=routes.join%>" id="joinForm" method="post" novalidate>
+                <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label>Full Name</label>
+                        <input type="" value="" id="name" class="form-control" name="name" required>
+                        <span class="form-text small">Your Full Name to app</span>
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label>Email Address</label>
+                        <input type="email" value="" id="email" class="form-control" name="email" required>
+                        <span class="form-text small">Your address email to contact</span>
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label>Password</label>
+                        <input type="password" value="" id="password" class="form-control" name="password" required>
+                        <span class="form-text small">Your hard to guess password</span>
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label>Repeat Password</label>
+                        <input type="password" value="" id="password2" class="form-control" name="password2" required>
+                        <span class="form-text small">Please repeat your pasword</span>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-accent" type="submit">Join Now</button>
+                    <a class="btn btn-default" href="<%=routes.login%>">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>

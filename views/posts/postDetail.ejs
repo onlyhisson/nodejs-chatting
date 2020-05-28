@@ -1,0 +1,84 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="view-header">
+            <div class="pull-right text-right" style="line-height: 14px">
+                <small><%=pageTitle%><br>General<br> <span class="c-white">Table styles</span></small>
+            </div>
+            <div class="header-icon">
+                <i class="pe page-header-icon pe-7s-menu"></i>
+            </div>
+            <div class="header-title">
+                <h3><%=pageTitle%></h3>
+                <small><%=subTitle%></small>
+            </div>
+        </div>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-filled">
+            <div class="panel-heading">
+                <div class="panel-tools">
+                    <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                    <a class="panel-close"><i class="fa fa-times"></i></a>
+                </div>
+                <h4>Post Form</h4>
+            </div>
+            <div class="panel-body">
+
+                <p>post detail </p>
+
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        <form action="<%=routes.posts%><%=routes.editPost%>", method="post", enctype="multipart/form-data">
+                            <input type="hidden" name="postId" value="<%=postOne.id%>">
+                            <% if(postOne.fileUrl) { %>
+                            <div class="form-group text-center">
+                                <img src="<%=postOne.fileUrl%>" style="width: 100%;">
+                            </div>
+                            <% } %>
+                            <div class="form-group">
+                                <label>Modified Date</label>
+                                <input type="text" class="form-control" name="modified-date" value="<%=moment(postOne.modifiedAt).format('YYYY-MM-DD hh:mm:ss') %>" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input type="text" class="form-control" name="title" placeholder="Title input" value="<%=postOne.title%>">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Sub Title</label>
+                                <input type="text" class="form-control" name="subTitle" placeholder="Sub Title input" value="<%=postOne.subTitle%>">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Contents</label>
+                                <textarea class="form-control" name="postContent" rows="3" placeholder="Content input"><%-postOne.postContent%></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Upload Image</label></br>
+                                <label class="btn btn-default" for="postImage">
+                                    <input id="postImage" name="postImage" type="file" style="display:none;"
+                                            onchange="$('#upload-file-info2').html($(this).val());">
+                                    <span id="upload-file-info2">Click Here</span>
+                                </label>
+                            </div>
+
+                            <div class="form-group text-right">
+                                <button type="submit" class="btn btn-accent" style="width: 100px;">Update</button>
+                                <a href="<%=routes.deletePost(postOne.id)%>" class="btn btn-danger" style="width: 100px;">Delete</a>
+                                <a href="<%=routes.posts%>" class="btn btn-default" style="margin-left: 20px; width: 100px;">Cancel</a>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+<!-- Vendor scripts -->
+<script src="/assets/vendor/jquery/dist/jquery.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!-- <script src="/assets/vendor/pacejs/pace.min.js"></script> -->
+<script src="/assets/vendor/toastr/toastr.min.js"></script>
+
+<script src="/assets/vendor/sparkline/index.js"></script>
+<script src="/assets/vendor/flot/jquery.flot.min.js"></script>
+<script src="/assets/vendor/flot/jquery.flot.resize.min.js"></script>
+<script src="/assets/vendor/flot/jquery.flot.spline.js"></script>
+
+<script src="/assets/vendor/datatables/datatables.min.js"></script>
+<script src="/assets/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<script src="/assets/vendor/moment/moment.js"></script>
+
+<!-- App scripts -->
+<script src="/assets/scripts/luna.js"></script>
+<script src="/public/js/custom.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#showToastr').trigger('click');  // ref: custom.js
+        /*
+        $('#tableExample1').DataTable({
+            "dom": 't'
+        });
+
+        $('#tableExample2').DataTable({
+            "dom": "<'row'<'col-sm-6'l><'col-sm-6'f>>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
+            "lengthMenu": [[6, 25, 50, -1], [6, 25, 50, "All"]],
+            "iDisplayLength": 6,
+        });
+        */
+
+        $('#postDataTable1').DataTable({
+            dom: "<'row'<'col-sm-4'l><'col-sm-4 text-center'B><'col-sm-4'f>>tp",
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            buttons: [
+                {extend: 'copy', className: 'btn-sm'},
+                {extend: 'csv', title: 'ExampleFile', className: 'btn-sm'},
+                {extend: 'pdf', title: 'ExampleFile', className: 'btn-sm'},
+                {extend: 'print', className: 'btn-sm'}
+            ],
+            "order": [[ 3, "desc" ]] // sorting
+        });
+    });
+</script>

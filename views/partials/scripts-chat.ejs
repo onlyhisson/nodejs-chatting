@@ -1,0 +1,268 @@
+<script src="/public/js/socket.io.js"></script>
+<script>
+
+    // ADD_CHAT_TIME > FADE_OUT
+    const FADE_TIME = 150; // ms
+    const FADE_OUT = 150; // ms
+    const TYPING_TIMER_LENGTH = 400; // ms
+    const ADD_CHAT_TIME = 200; // ms 
+
+    const $chatList = $('#chat-list');
+    const $chat = $('#chat');
+
+    let connected = false;
+    let typing = false;
+    let userEmail = '<%=email%>';
+
+    // 다른 스크립트 보다 socket.io 가 우선 실행되어 
+    // 글로벌 변수를 불러오지 못하기 때문에 강제 지연
+    setTimeout(function () {  
+        // client socket connection set
+        const socket = io.connect(`${COMMON_VAL.LOC_URL}:${COMMON_VAL.LOC_PORT}/chat`, {
+            path: '/socket.io'
+        });
+
+        socket.on('connect', function (data) {
+            connected = true;
+            document.querySelector('.panel-heading').style.display = '';
+            document.querySelector('#chat-list').style.display = '';
+            document.querySelector('#chat-form').style.display = '';
+            document.querySelector('.loader-container').style.display = 'none';
+        });
+
+        socket.on('join', function (data) {
+            let div = document.createElement('div');
+            div.classList.add('system');
+            let chat = document.createElement('div');
+            div.textContent = data.chat;
+            div.appendChild(chat);
+            document.querySelector('#chat-list').appendChild(div);
+        });
+
+        socket.on('exit', function (data) {
+            let div = document.createElement('div');
+            div.classList.add('system');
+            let chat = document.createElement('div');
+            div.textContent = data.chat;
+            div.appendChild(chat);
+            document.querySelector('#chat-list').appendChild(div);
+        });
+
+        socket.on('chat', function (data) {
+            let div = document.createElement('div');
+            if (data.name === '<%=name%>') {
+                div.classList.add('mine');
+            } else {
+                div.classList.add('other');
+            }
+            let name = document.createElement('div');
+            name.textContent = data.name;
+            div.appendChild(name);
+            if (data.chat) {
+                let chat = document.createElement('div');
+                chat.textContent = data.chat;
+                div.appendChild(chat);
+            } else {
+                let gif = document.createElement('img');
+                gif.src = '/gif/' + data.gif;
+                div.appendChild(gif);
+            }
+            div.style.color = data.color;
+            setTimeout(() => {
+                document.querySelector('#chat-list').appendChild(div);
+            }, ADD_CHAT_TIME)
+        });
+
+        socket.on('typing', (data) => {
+            // data ={email: "onlyhisson@gmail.com", name: "JHS", color: "#2d7486"}
+            addChatTyping(data);
+        });
+
+        socket.on('stop typing', (data) => {
+            removeChatTyping(data);
+        });
+
+        document.querySelector('#chat-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (e.target.chat.value) {
+                var xhr = new XMLHttpRequest();
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        e.target.chat.value = '';
+                    } else {
+                        console.error(xhr.responseText);
+                    }
+                };
+                xhr.open('POST', '/chatting/room/<%=room._id%>/chat');
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({ chat: this.chat.value }));
+            }
+        });
+
+        document.querySelector('#gif').addEventListener('change', function (e) {
+            let formData = new FormData();
+            let xhr = new XMLHttpRequest();
+            console.log(e.target.files);
+            formData.append('gif', e.target.files[0]);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    e.target.file = null;
+                } else {
+                    console.error(xhr.responseText);
+                }
+            };
+            xhr.open('POST', '/chatting/room/<%=room._id%>/gif');
+            xhr.send(formData);
+        });
+        
+//######################################################################
+//  socket typing start 
+//######################################################################
+
+        $chat.on('input', () => {   // input 입력 이벤트 핸들러
+            updateTyping();
+        });
+
+        const addChatTyping = (data) => {
+            data = data || {};
+            data.typing = true;
+            data.message = ' is typing';
+            addChatMessage(data);
+        };
+
+        // Updates the typing event
+        const updateTyping = () => {
+            if (connected) {
+                if (!typing) {
+                    typing = true;
+                    //socket.emit('typing');
+                    ajaxSocketEmitEvent('typing');
+                }
+                lastTypingTime = (new Date()).getTime();
+
+                setTimeout(() => {
+                    const typingTimer = (new Date()).getTime();
+                    const timeDiff = typingTimer - lastTypingTime;
+                    if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
+                        ajaxSocketEmitEvent('stop_typing');
+                        typing = false;
+                    }
+                }, TYPING_TIMER_LENGTH);
+            }
+        };
+
+        const addChatMessage = (data, options) => {
+            // Don't fade the message in if there is an 'X was typing'
+            const $typingMessages = getTypingMessages(data, true);
+
+            options = options || {};
+
+            if(data.email != '<%=email%>') {
+                options.append = true;
+            }
+
+            if ($typingMessages.length > 0) {
+                options.fade = false;
+                $typingMessages.remove();
+            }
+
+            const $usernameDiv = $('<span class="username"/>')
+                .text(data.name)
+                .css('color', data.color);
+            const $messageBodyDiv = $('<span class="messageBody">')
+                .text(data.message);
+
+            const typingClass = data.typing ? 'typing' : '';
+            const $messageDiv = $('<li class="message"/>')
+                .data('user-email', '<%=email%>')
+                .addClass(typingClass)
+                .append($usernameDiv, $messageBodyDiv);
+
+            addMessageElement($messageDiv, options);
+        };
+
+        const getTypingMessages = (data, equal) => {
+            return $('.typing.message').filter(function (i) {
+                if(equal) {
+                    return $(this).data('user-email') === data.email;
+                } else {
+                    return $(this).data('user-email') !== data.email;
+                }
+            });
+        };
+
+        const addMessageElement = (el, options) => {
+            const $el = $(el);
+
+            // Setup default options
+            if (!options) {
+                options = {};
+            }
+            if (typeof options.fade === 'undefined') {
+                options.fade = true;
+            }
+            if (typeof options.append === 'undefined') {
+                options.append = false;
+            }
+            // Apply options
+            if (options.fade) {
+                $el.hide().fadeIn(FADE_TIME);
+            }
+            if (options.append) {
+                $chatList.append($el);
+            } 
+
+            $chatList[0].scrollTop = $chatList[0].scrollHeight;
+        }
+
+        const removeChatTyping = (data) => {
+            getTypingMessages(data, false).fadeOut(FADE_OUT, function () {
+                $(this).remove();
+            });
+        }
+
+        const ajaxSocketEmitEvent = (socketEvent) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log(`${socketEvent} ajax success`);
+                } else {
+                    console.log(`${socketEvent} ajax success`);
+                    console.error(xhr.responseText);
+                }
+            };
+            xhr.open('POST', '/chatting/room/<%=room._id%>/typing');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({ chat: socketEvent }));
+        }
+
+        $(window).keydown(event => {
+            // Auto-focus the current input when a key is typed
+            if (!(event.ctrlKey || event.metaKey || event.altKey)) {
+                $chat.focus();
+            }
+            // When the client hits ENTER on their keyboard
+            if (event.which === 13) {
+                if (userEmail) {
+                    //sendMessage();
+                    //socket.emit('stop typing');
+                    ajaxSocketEmitEvent('stop_typing');
+                    typing = false;
+                } else {
+                    //setUsername();
+                }
+            }
+        });
+        
+//######################################################################
+//  socket typing end 
+//######################################################################
+
+    }, 200);
+</script>
+
+<script>
+$(document).ready(function () {
+
+});
+</script>

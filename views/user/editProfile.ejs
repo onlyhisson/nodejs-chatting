@@ -1,0 +1,64 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="view-header">
+                <div class="pull-right text-right" style="line-height: 14px">
+                    <small><%=pageTitle%><br>General<br> <span class="c-white">Table styles</span></small>
+                </div>
+                <div class="header-icon">
+                    <i class="pe page-header-icon pe-7s-user"></i>
+                </div>
+                <div class="header-title">
+                    <h3><%=pageTitle%></h3>
+                    <small><%=subTitle%></small>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-filled">
+
+                <!-- <div class="panel-heading">
+                    <div class="panel-tools">
+                        <a class="panel-toggle"><i class="fa fa-chevron-up"></i></a>
+                        <a class="panel-close"><i class="fa fa-times"></i></a>
+                    </div>
+                    Basic example
+                </div> -->
+
+                <div class="panel-body">
+
+                    <form action="<%=routes.users%><%=routes.editProfile%>", method="post", enctype="multipart/form-data">
+                        <div class="form-group">
+                            <p style="color: #FFF;">Profile Picture </p>
+                            <label class="btn btn-default" for="avatar">
+                                <input id="avatar" type="file" name="avatar" style="display:none;"
+                                    onchange="$('#upload-file-info').html($(this).val());">
+                                Upload file
+                            </label>
+                            <span class='label label-default' id="upload-file-info" style="color: #f6a821;font-size: 1rem;"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="userName">Username</label> 
+                            <input type="text" class="form-control" id="userName" name="name" placeholder="Name" value="<%=loggedUser.name%>" style="color: #f6a821">
+                        </div>
+                        <div class="form-group">
+                            <label for="userEmail">Email address</label> 
+                            <input type="email" class="form-control" id="userEmail" name="email" placeholder="Email" value="<%=loggedUser.email%>" style="color: #f6a821">
+                        </div>
+
+                        <!-- <div><label> <input type="checkbox"> Check me out </label></div> -->
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-accent mt-30">Update Profile</button>
+                            <a href="<%=routes.users%><%=routes.profile%>" class="btn btn-default mt-30">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

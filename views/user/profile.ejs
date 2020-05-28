@@ -1,0 +1,45 @@
+<div class="container-fluid">
+    
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="view-header">
+                <div class="pull-right text-right" style="line-height: 14px">
+                    <small><%=pageTitle%><br>General<br> <span class="c-white">Table styles</span></small>
+                </div>
+                <div class="header-icon">
+                    <i class="pe page-header-icon pe-7s-user"></i>
+                </div>
+                <div class="header-title">
+                    <h3><%=pageTitle%></h3>
+                    <small><%=subTitle%></small>
+                </div>
+            </div>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="panel panel-filled ">
+                <div class="panel-body">
+                    <div class="btn-group pull-right m-b-md">
+                        <a class="btn btn-default btn-xs" href="<%=routes.users%><%=routes.editProfile%>">Edit Profile</a>
+                        <a class="btn btn-default btn-xs" href="<%=routes.users%><%=routes.changePassword%>">Change Password</a>
+                    </div>
+                    <%
+                        let userImage = '/images/user1.jpg';
+                        if(user.avatarUrl){userImage = user.avatarUrl;};
+                    %>
+                    <img alt="image" class="rounded image-lg" src="<%=userImage%>">
+                    <h5 class="m-b-none"><a href=""> <%=user.name%> </a></h5>
+
+                    <div class="m-b-xs c-white small"><%=user.email%></div>
+                    <p><%=user.introduce%></p>
+                    <small><i class="fa fa-clock-o"></i> <%=user.createdAt%></small>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
